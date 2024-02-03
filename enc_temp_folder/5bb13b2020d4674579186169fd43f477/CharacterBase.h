@@ -11,6 +11,8 @@ class TROOPBATTLE_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY(VisibleAnywhere)
+	class UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* SelectAction;

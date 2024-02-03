@@ -14,15 +14,11 @@ class TROOPBATTLE_API APlayerControllerBase : public APlayerController
 {
 	GENERATED_BODY()
 	
-private:
-	UPROPERTY(VisibleAnywhere)
-	class UInputMappingContext* InputMappingContext;
 
 public:
 	APlayerControllerBase();
 	~APlayerControllerBase();
 
-	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
 
 

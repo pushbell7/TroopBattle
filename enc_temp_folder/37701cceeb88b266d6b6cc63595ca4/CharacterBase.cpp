@@ -3,6 +3,8 @@
 
 #include "CharacterBase.h"
 #include <EnhancedInputComponent.h>
+#include <InputMappingContext.h>
+#include <EnhancedInputSubsystems.h>
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -10,6 +12,11 @@ ACharacterBase::ACharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextResource(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Common/Input/IMC_TestInputMap.IMC_TestInputMap'"));
+	if (InputMappingContextResource.Succeeded())
+	{
+		InputMappingContext = InputMappingContextResource.Object;
+	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> SelectActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_Select.IA_Select'"));
 	if (SelectActionResource.Succeeded())
@@ -23,6 +30,14 @@ void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// TODO : move to controller
+	if (APlayerController* playerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer()))
+		{
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
 }
 
 // Called every frame
