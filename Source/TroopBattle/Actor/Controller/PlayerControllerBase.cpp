@@ -6,6 +6,8 @@
 #include <InputMappingContext.h>
 #include <EnhancedInputSubsystems.h>
 
+#include "TroopBattle/Actor/Pawn/UnitBase.h"
+
 
 APlayerControllerBase::APlayerControllerBase()
 {
@@ -16,6 +18,8 @@ APlayerControllerBase::APlayerControllerBase()
 	{
 		InputMappingContext = InputMappingContextResource.Object;
 	}
+
+	TestUnit = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, TEXT("/Script/Engine.Blueprint'/Game/Characters/BP_TestUnit.BP_TestUnit'")));
 }
 
 APlayerControllerBase::~APlayerControllerBase() = default;
@@ -35,4 +39,6 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	UE_LOG(LogTemp, Log, TEXT("possess %s"), *aPawn->GetHumanReadableName());
+
+	GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, aPawn->GetTransform());
 }

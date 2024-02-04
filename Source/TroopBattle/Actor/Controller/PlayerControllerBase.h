@@ -18,6 +18,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UInputMappingContext* InputMappingContext;
 
+	class UBlueprint* TestUnit;
 public:
 	APlayerControllerBase();
 	~APlayerControllerBase();

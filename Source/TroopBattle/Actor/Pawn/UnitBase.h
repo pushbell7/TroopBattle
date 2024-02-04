@@ -4,20 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "CharacterBase.generated.h"
+#include "UnitBase.generated.h"
 
 UCLASS()
-class TROOPBATTLE_API ACharacterBase : public ACharacter
+class TROOPBATTLE_API AUnitBase : public ACharacter
 {
 	GENERATED_BODY()
-private:
-
-	UPROPERTY(VisibleAnywhere)
-	class UInputAction* SelectAction;
 
 public:
 	// Sets default values for this character's properties
-	ACharacterBase();
+	AUnitBase();
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,6 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
-	void HandleSelectAction(const struct FInputActionValue& Value);
 };
