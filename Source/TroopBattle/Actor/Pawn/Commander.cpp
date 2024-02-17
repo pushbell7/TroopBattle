@@ -3,6 +3,7 @@
 
 #include "Commander.h"
 #include <EnhancedInputComponent.h>
+#include <Camera/CameraComponent.h>
 
 // Sets default values
 ACommander::ACommander()
@@ -45,8 +46,6 @@ ACommander::ACommander()
 	{
 		ScreenRightAction = ScreenRightActionResource.Object;
 	}
-
-
 }
 
 // Called when the game starts or when spawned
@@ -54,6 +53,7 @@ void ACommander::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CameraComponent = GetComponentByClass<UCameraComponent>();
 }
 
 // Called every frame
@@ -73,7 +73,7 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	
 	// 여기에서 'ETriggerEvent' 열거형 값을 변경하여 원하는 트리거 이벤트를 바인딩할 수 있습니다.
-	Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACommander::HandleSelectAction);
+	Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACommander::HandleSelectingAction);
 	Input->BindAction(ScreenUpAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestUpPressAction);
 	Input->BindAction(ScreenDownAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestDownPressAction);
 	Input->BindAction(ScreenLeftAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestLeftPressAction);
@@ -81,9 +81,41 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 }
 
-void ACommander::HandleSelectAction(const FInputActionValue& Value)
+void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("Handled"));
+	if (auto* playerController = GetController<APlayerController>())
+	{
+		FVector2D mousePosition;
+		playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
+
+		if (SelectionStartPosition.IsZero())
+		{
+			SelectionStartPosition = mousePosition;
+		}
+		else
+		{
+			if (Value.Get<bool>())
+			{
+				// draw rect from SelectionStartPosition to mousePosition
+			}
+			else
+			{
+				auto forwardVector = CameraComponent->GetForwardVector();
+				// Select unit from SelectionStartPosition to mousePosition
+				FVector startPosition, endPosition;
+				FVector startDirection, endDirection;
+				playerController->DeprojectScreenPositionToWorld(SelectionStartPosition.X, SelectionStartPosition.Y, startPosition, startDirection);
+				playerController->DeprojectScreenPositionToWorld(mousePosition.X, mousePosition.Y, endPosition, endDirection);
+				TArray<FHitResult> hitResults;
+				auto boxShape = FCollisionShape::MakeBox((endPosition - startPosition) / 2);
+				GetWorld()->SweepMultiByChannel(hitResults, startPosition, endPosition, FQuat::Identity, ECollisionChannel::ECC_Pawn, boxShape);
+
+				DrawDebugBox(GetWorld(), (endPosition + startPosition) / 2, boxShape.GetExtent(), FQuat::Identity, FColor::Green, false, 60.0f);
+				UE_LOG(LogTemp, Log, TEXT("selected %d : (%s -> %s)"), hitResults.Num(), *startPosition.ToString(), *endPosition.ToString());
+				SelectionStartPosition = FVector2D::Zero();
+			}
+		}
+	}
 }
 
 void ACommander::HandleTestUpPressAction(const FInputActionValue& Value)

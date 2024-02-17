@@ -24,7 +24,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* ScreenRightAction;
 
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* CameraComponent;
+
 	FVector MovingDirection;
+	FVector2D SelectionStartPosition;
 public:
 	// Sets default values for this character's properties
 	ACommander();
@@ -41,7 +45,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	void HandleSelectAction(const struct FInputActionValue& Value);
+	void HandleSelectingAction(const struct FInputActionValue& Value);
 	void HandleTestUpPressAction(const struct FInputActionValue& Value);
 	void HandleTestDownPressAction(const struct FInputActionValue& Value);
 	void HandleTestLeftPressAction(const struct FInputActionValue& Value);
