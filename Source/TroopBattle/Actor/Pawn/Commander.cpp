@@ -102,16 +102,29 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 			{
 				auto forwardVector = CameraComponent->GetForwardVector();
 				// Select unit from SelectionStartPosition to mousePosition
-				FVector startPosition, endPosition;
-				FVector startDirection, endDirection;
-				playerController->DeprojectScreenPositionToWorld(SelectionStartPosition.X, SelectionStartPosition.Y, startPosition, startDirection);
-				playerController->DeprojectScreenPositionToWorld(mousePosition.X, mousePosition.Y, endPosition, endDirection);
+				
+				// TODO : change not raycasting but getting units from object manager
+				FHitResult hitResult;
+				playerController->GetHitResultAtScreenPosition(SelectionStartPosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+				FVector startPosition = hitResult.Location;
+				DrawDebugSphere(GetWorld(), hitResult.Location, 3.0f, 1, FColor::Red, false, 10.0f);
+
+				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+				FVector endPosition = hitResult.Location;
+				DrawDebugSphere(GetWorld(), hitResult.Location, 3.0f, 1, FColor::Blue, false, 10.0f);
+
 				TArray<FHitResult> hitResults;
-				auto boxShape = FCollisionShape::MakeBox((endPosition - startPosition) / 2);
-				GetWorld()->SweepMultiByChannel(hitResults, startPosition, endPosition, FQuat::Identity, ECollisionChannel::ECC_Pawn, boxShape);
+				auto boxShape = FCollisionShape::MakeBox((endPosition - startPosition) / 2 + FVector(0, 0, 50));
+				GetWorld()->SweepMultiByChannel(hitResults, startPosition, endPosition, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, boxShape);
 
 				DrawDebugBox(GetWorld(), (endPosition + startPosition) / 2, boxShape.GetExtent(), FQuat::Identity, FColor::Green, false, 60.0f);
-				UE_LOG(LogTemp, Log, TEXT("selected %d : (%s -> %s)"), hitResults.Num(), *startPosition.ToString(), *endPosition.ToString());
+
+				FString buffer = TEXT("selected : ");
+				for (int i = 0; i < hitResults.Num(); ++i)
+				{
+					buffer += hitResults[i].GetActor()->GetFName().ToString();
+				}
+				UE_LOG(LogTemp, Log, TEXT("%s"), *buffer);
 				SelectionStartPosition = FVector2D::Zero();
 			}
 		}
