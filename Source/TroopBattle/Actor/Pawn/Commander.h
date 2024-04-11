@@ -27,8 +27,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class UBlueprint* SelectionBox;
+
 	FVector MovingDirection;
-	FVector2D SelectionStartPosition;
+	FVector SelectionStartPosition;
 public:
 	// Sets default values for this character's properties
 	ACommander();

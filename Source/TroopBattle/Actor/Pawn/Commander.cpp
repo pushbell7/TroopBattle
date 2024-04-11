@@ -4,6 +4,7 @@
 #include "Commander.h"
 #include <EnhancedInputComponent.h>
 #include <Camera/CameraComponent.h>
+#include <Kismet/KismetSystemLibrary.h>
 
 // Sets default values
 ACommander::ACommander()
@@ -46,6 +47,9 @@ ACommander::ACommander()
 	{
 		ScreenRightAction = ScreenRightActionResource.Object;
 	}
+
+	SelectionBox = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, TEXT("/Script/Engine.Blueprint'/Game/Actors/SelectionBox.SelectionBox'")));
+
 }
 
 // Called when the game starts or when spawned
@@ -90,42 +94,31 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 
 		if (SelectionStartPosition.IsZero())
 		{
-			SelectionStartPosition = mousePosition;
+			FHitResult hitResult;
+			// make 4 point on screen from min, max
+			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+			SelectionStartPosition = hitResult.Location;
 		}
 		else
 		{
 			if (Value.Get<bool>())
 			{
-				// draw rect from SelectionStartPosition to mousePosition
+				// draw rect from SelectionStartPosition to mousePosition on HUD
 			}
 			else
 			{
-				auto forwardVector = CameraComponent->GetForwardVector();
-				// Select unit from SelectionStartPosition to mousePosition
-				
-				// TODO : change not raycasting but getting units from object manager
 				FHitResult hitResult;
-				playerController->GetHitResultAtScreenPosition(SelectionStartPosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
-				FVector startPosition = hitResult.Location;
-				DrawDebugSphere(GetWorld(), hitResult.Location, 3.0f, 1, FColor::Red, false, 10.0f);
-
-				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);				
 				FVector endPosition = hitResult.Location;
-				DrawDebugSphere(GetWorld(), hitResult.Location, 3.0f, 1, FColor::Blue, false, 10.0f);
 
-				TArray<FHitResult> hitResults;
-				auto boxShape = FCollisionShape::MakeBox((endPosition - startPosition) / 2 + FVector(0, 0, 50));
-				GetWorld()->SweepMultiByChannel(hitResults, startPosition, endPosition, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, boxShape);
+				FTransform transform;
+				transform.SetLocation((SelectionStartPosition + endPosition) / 2);
+				auto* actor = GetWorld()->SpawnActor<AActor>(SelectionBox->GeneratedClass, transform);
 
-				DrawDebugBox(GetWorld(), (endPosition + startPosition) / 2, boxShape.GetExtent(), FQuat::Identity, FColor::Green, false, 60.0f);
+				FVector scale = (endPosition - SelectionStartPosition) / 2;
+				actor->SetActorRelativeScale3D(FVector(FMath::Abs(scale.X), FMath::Abs(scale.Y), FMath::Abs(scale.Z) + 10);
 
-				FString buffer = TEXT("selected : ");
-				for (int i = 0; i < hitResults.Num(); ++i)
-				{
-					buffer += hitResults[i].GetActor()->GetFName().ToString();
-				}
-				UE_LOG(LogTemp, Log, TEXT("%s"), *buffer);
-				SelectionStartPosition = FVector2D::Zero();
+				SelectionStartPosition = FVector::ZeroVector;
 			}
 		}
 	}

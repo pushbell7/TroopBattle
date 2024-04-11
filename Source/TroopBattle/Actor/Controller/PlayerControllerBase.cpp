@@ -19,7 +19,7 @@ APlayerControllerBase::APlayerControllerBase()
 		InputMappingContext = InputMappingContextResource.Object;
 	}
 
-	TestUnit = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, TEXT("/Script/Engine.Blueprint'/Game/Characters/BP_TestUnit.BP_TestUnit'")));
+	TestUnit = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, TEXT("/Script/Engine.Blueprint'/Game/Actors/Characters/BP_TestUnit.BP_TestUnit'")));
 }
 
 APlayerControllerBase::~APlayerControllerBase() = default;
