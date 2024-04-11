@@ -5,6 +5,7 @@
 #include <EnhancedInputComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetSystemLibrary.h>
+#include "../../Subsystem/PlayerSelectionManagingSubsystem.h"
 
 // Sets default values
 ACommander::ACommander()
@@ -94,8 +95,9 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 
 		if (SelectionStartPosition.IsZero())
 		{
+			GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->ResetSelection();
+
 			FHitResult hitResult;
-			// make 4 point on screen from min, max
 			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
 			SelectionStartPosition = hitResult.Location;
 		}
@@ -116,8 +118,10 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 				auto* actor = GetWorld()->SpawnActor<AActor>(SelectionBox->GeneratedClass, transform);
 
 				FVector scale = (endPosition - SelectionStartPosition) / 2;
-				actor->SetActorRelativeScale3D(FVector(FMath::Abs(scale.X), FMath::Abs(scale.Y), FMath::Abs(scale.Z) + 10);
+				actor->SetActorRelativeScale3D(FVector(FMath::Abs(scale.X), FMath::Abs(scale.Y), FMath::Abs(scale.Z) + 10));
 
+				const auto& selectedActors = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->GetSelectedActors();
+				UE_LOG(LogTemp, Log, TEXT("selected : %d"), selectedActors.Num());
 				SelectionStartPosition = FVector::ZeroVector;
 			}
 		}
