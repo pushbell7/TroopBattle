@@ -21,6 +21,11 @@ ACommander::ACommander()
 		SelectAction = SelectActionResource.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> CommandActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_Command.IA_Command'"));
+	if (CommandActionResource.Succeeded())
+	{
+		CommandAction = CommandActionResource.Object;
+	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> ScreenUpActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_ScreenUp.IA_ScreenUp'"));
 	if (ScreenUpActionResource.Succeeded())
@@ -79,6 +84,8 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 	// 여기에서 'ETriggerEvent' 열거형 값을 변경하여 원하는 트리거 이벤트를 바인딩할 수 있습니다.
 	Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACommander::HandleSelectingAction);
+	Input->BindAction(CommandAction, ETriggerEvent::Triggered, this, &ACommander::HandleCommandAction);
+
 	Input->BindAction(ScreenUpAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestUpPressAction);
 	Input->BindAction(ScreenDownAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestDownPressAction);
 	Input->BindAction(ScreenLeftAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestLeftPressAction);
@@ -127,6 +134,23 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 		}
 	}
 }
+
+void ACommander::HandleCommandAction(const FInputActionValue& Value)
+{
+	if (auto* playerController = GetController<APlayerController>())
+	{
+		FVector2D mousePosition;
+		playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
+
+		FHitResult hitResult;
+		playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+
+		GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->Command(ECommandType::Move, hitResult.Location);
+
+	}
+}
+
+
 
 void ACommander::HandleTestUpPressAction(const FInputActionValue& Value)
 {

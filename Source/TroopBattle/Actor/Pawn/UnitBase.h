@@ -4,12 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include <Runtime/AIModule/Classes/AIController.h>
 #include "UnitBase.generated.h"
 
 UCLASS()
 class TROOPBATTLE_API AUnitBase : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	enum class EAction
+	{
+		Stop,
+		Move,
+	};
+
+	EAction CurrentState;
+	FVector TargetPosition;
 
 public:
 	// Sets default values for this character's properties
@@ -26,4 +37,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
+	void SetMovingPosition(const FVector& deltaPosition);
+	void ChangeState(EAction action);
+
+private:
+	void HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result);
 };

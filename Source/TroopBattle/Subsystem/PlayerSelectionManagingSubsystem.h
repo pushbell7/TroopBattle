@@ -6,6 +6,12 @@
 #include "Subsystems/LocalPlayerSubsystem.h"
 #include "PlayerSelectionManagingSubsystem.generated.h"
 
+UENUM()
+enum class ECommandType
+{
+	Move,
+};
+
 /**
  * 
  */
@@ -26,4 +32,10 @@ public:
 	void AddSelection(AActor* selectedActor);
 	UFUNCTION(BlueprintCallable)
 	void ResetSelection();
+
+	UFUNCTION(BlueprintCallable)
+	void Command(ECommandType type, const FVector& targetPosition);
+
+private:
+	FVector GetCenterPosition() const;
 };

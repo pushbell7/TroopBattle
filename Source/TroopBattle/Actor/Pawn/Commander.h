@@ -14,6 +14,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* SelectAction;
+	UPROPERTY(VisibleAnywhere)
+	class UInputAction* CommandAction;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* ScreenUpAction;
@@ -49,6 +51,7 @@ public:
 
 private:
 	void HandleSelectingAction(const struct FInputActionValue& Value);
+	void HandleCommandAction(const struct FInputActionValue& Value);
 	void HandleTestUpPressAction(const struct FInputActionValue& Value);
 	void HandleTestDownPressAction(const struct FInputActionValue& Value);
 	void HandleTestLeftPressAction(const struct FInputActionValue& Value);
