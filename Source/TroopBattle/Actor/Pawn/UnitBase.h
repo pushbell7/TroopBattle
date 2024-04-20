@@ -29,7 +29,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void PossessedBy(AController* controller) override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,5 +42,6 @@ public:
 	void ChangeState(EAction action);
 
 private:
+	UFUNCTION()
 	void HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result);
 };

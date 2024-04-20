@@ -19,6 +19,14 @@ void AUnitBase::BeginPlay()
 
 }
 
+void AUnitBase::PossessedBy(AController* controller)
+{
+	Super::PossessedBy(controller);
+
+	auto* aiController = dynamic_cast<AAIController*>(controller);
+	aiController->ReceiveMoveCompleted.AddDynamic(this, &AUnitBase::HandleMoveCompleted);
+}
+
 // Called every frame
 void AUnitBase::Tick(float DeltaTime)
 {
@@ -37,7 +45,6 @@ void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 	ChangeState(EAction::Move);
 	TargetPosition = GetActorLocation() + deltaPosition;
 	auto* aiController = GetInstigatorController<AAIController>();
-	//aiController->ReceiveMoveCompleted.AddUObject(this, &AUnitBase::HandleMoveCompleted);
 	auto result = aiController->MoveToLocation(TargetPosition);
 }
 
