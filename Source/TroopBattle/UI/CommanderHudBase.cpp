@@ -1,0 +1,13 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "CommanderHudBase.h"
+
+void UCommanderHudBase::Init()
+{
+	
+}
+
+void UCommanderHudBase::RefreshCommandButtons()
+{
+}

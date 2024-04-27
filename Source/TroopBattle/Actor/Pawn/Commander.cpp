@@ -5,7 +5,9 @@
 #include <EnhancedInputComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetSystemLibrary.h>
+#include <GameFramework/GameModeBase.h>
 #include "../../Subsystem/PlayerSelectionManagingSubsystem.h"
+#include <TroopBattle/UI/CommanderHudBase.h>
 
 // Sets default values
 ACommander::ACommander()
@@ -130,6 +132,8 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 				const auto& selectedActors = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->GetSelectedActors();
 				UE_LOG(LogTemp, Log, TEXT("selected : %d"), selectedActors.Num());
 				SelectionStartPosition = FVector::ZeroVector;
+
+				Cast<UCommanderHudBase>(GetWorld()->GetAuthGameMode()->HUDClass);
 			}
 		}
 	}

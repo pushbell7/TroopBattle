@@ -9,6 +9,16 @@ const TArray<AActor*>& UPlayerSelectionManagingSubsystem::GetSelectedActors() co
 	return SelectedActors;
 }
 
+AActor* UPlayerSelectionManagingSubsystem::GetRepresentativeActor() const
+{
+	if (SelectedActors.IsEmpty())
+	{
+		return nullptr;
+	}
+	constexpr int TEMPORARY_REPRESENTATIVE_ACTOR_INDEX = 0;
+	return SelectedActors[TEMPORARY_REPRESENTATIVE_ACTOR_INDEX];
+}
+
 void UPlayerSelectionManagingSubsystem::AddSelection(AActor* selectedActor)
 {
 	SelectedActors.Add(selectedActor);

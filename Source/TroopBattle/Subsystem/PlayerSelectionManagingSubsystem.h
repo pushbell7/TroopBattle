@@ -29,6 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const TArray<AActor*>& GetSelectedActors() const;
 	UFUNCTION(BlueprintCallable)
+	AActor* GetRepresentativeActor() const;
+
+	UFUNCTION(BlueprintCallable)
 	void AddSelection(AActor* selectedActor);
 	UFUNCTION(BlueprintCallable)
 	void ResetSelection();
