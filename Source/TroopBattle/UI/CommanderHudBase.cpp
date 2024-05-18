@@ -3,11 +3,3 @@
 
 #include "CommanderHudBase.h"
 
-void UCommanderHudBase::Init()
-{
-	
-}
-
-void UCommanderHudBase::RefreshCommandButtons()
-{
-}

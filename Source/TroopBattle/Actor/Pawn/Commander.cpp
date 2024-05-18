@@ -7,7 +7,7 @@
 #include <Kismet/KismetSystemLibrary.h>
 #include <GameFramework/GameModeBase.h>
 #include "../../Subsystem/PlayerSelectionManagingSubsystem.h"
-#include <TroopBattle/UI/CommanderHudBase.h>
+#include <TroopBattle/UI/HudBase.h>
 
 // Sets default values
 ACommander::ACommander()
@@ -16,7 +16,7 @@ ACommander::ACommander()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	//TODO make resource loader from data asset
+	// @TODO make resource loader from data asset
 	static ConstructorHelpers::FObjectFinder<UInputAction> SelectActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_Select.IA_Select'"));
 	if (SelectActionResource.Succeeded())
 	{
@@ -119,7 +119,7 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 			else
 			{
 				FHitResult hitResult;
-				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);				
+				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
 				FVector endPosition = hitResult.Location;
 
 				FTransform transform;
@@ -132,8 +132,11 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 				const auto& selectedActors = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->GetSelectedActors();
 				UE_LOG(LogTemp, Log, TEXT("selected : %d"), selectedActors.Num());
 				SelectionStartPosition = FVector::ZeroVector;
-
-				Cast<UCommanderHudBase>(GetWorld()->GetAuthGameMode()->HUDClass);
+								
+				if (auto hud = Cast<AHudBase>(GetController<APlayerController>()->GetHUD()))
+				{
+					hud->RefreshCommanderWidget();
+				}
 			}
 		}
 	}

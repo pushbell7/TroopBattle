@@ -14,7 +14,4 @@ class TROOPBATTLE_API UCommanderHudBase : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-	void Init();
-	void RefreshCommandButtons();
 };
