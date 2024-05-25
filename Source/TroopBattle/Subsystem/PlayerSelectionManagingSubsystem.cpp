@@ -50,6 +50,36 @@ void UPlayerSelectionManagingSubsystem::Command(ECommandType type, const FVector
 	}
 }
 
+TArray<ECommandType> UPlayerSelectionManagingSubsystem::GetEnabledCommands() const
+{
+	TArray<ECommandType> result;
+	
+	// get actor info and assemble common functions actors can
+	for (auto* actor : SelectedActors)
+	{
+		if (auto* controller = actor->GetInstigatorController<APlayerController>())
+		{
+			//controller->GetPlayerState<APlayerState>();
+		}
+	}
+
+	//temporary setting
+	if (SelectedActors.IsEmpty()) return result;
+
+	result.Add(ECommandType::Move);
+	result.Add(ECommandType::Stop);
+	result.Add(ECommandType::None);
+
+	result.Add(ECommandType::Attack);
+	result.Add(ECommandType::None);
+	result.Add(ECommandType::None);
+
+	result.Add(ECommandType::None);
+	result.Add(ECommandType::None);
+
+	return result;
+}
+
 FVector UPlayerSelectionManagingSubsystem::GetCenterPosition() const
 {
 	FVector result = FVector::Zero();

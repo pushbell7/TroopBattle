@@ -9,8 +9,24 @@
 UENUM()
 enum class ECommandType
 {
+	None,
 	Move,
+	Stop,
+	Attack,
+
 };
+
+static const TCHAR* EnumToString(ECommandType type)
+{
+	switch (type)
+	{
+	case ECommandType::None: return TEXT("None");
+	case ECommandType::Move: return TEXT("Move");
+	case ECommandType::Stop: return TEXT("Stop");
+	case ECommandType::Attack: return TEXT("Attack");
+	default: return TEXT("None");
+	}
+}
 
 /**
  * 
@@ -38,6 +54,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Command(ECommandType type, const FVector& targetPosition);
+
+	TArray<ECommandType> GetEnabledCommands() const;
 
 private:
 	FVector GetCenterPosition() const;

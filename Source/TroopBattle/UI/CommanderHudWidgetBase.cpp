@@ -4,6 +4,8 @@
 #include "CommanderHudWidgetBase.h"
 #include <Components/PanelWidget.h>
 #include <TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h>
+#include <Components/HorizontalBox.h>
+#include "CommandButtonBase.h"
 
 bool UCommanderHudWidgetBase::Initialize()
 {
@@ -25,16 +27,35 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 	UE_LOG(LogTemp, Log, TEXT("RefreshCommandButtons"));
 
 	auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
-	if (selectionManager->GetSelectedActors().Num() > 0)
+	
+	auto commands = selectionManager->GetEnabledCommands();
+	int commandIndex = 0;
+	for (auto* child : CommanderButtonContainer->GetAllChildren())
 	{
-		for (auto* child : CommanderButtonContainer->GetAllChildren())
+		if (auto* horizontalBox = Cast<UHorizontalBox>(child))
 		{
-			child->SetVisibility(ESlateVisibility::Visible);
+			for (int i = 0; i < horizontalBox->GetChildrenCount(); ++i)
+			{
+				if (auto button = dynamic_cast<UCommandButtonBase*>(horizontalBox->GetChildAt(i)))
+				{
+					ECommandType type = ECommandType::None;
+					if (commandIndex < commands.Num())
+					{
+						type = commands[commandIndex];
+					}
+					if (type == ECommandType::None)
+					{
+						button->SetVisibility(ESlateVisibility::Hidden);
+					}
+					else
+					{
+						button->SetVisibility(ESlateVisibility::Visible);
+						button->Label->SetText(FText::FromString(EnumToString(type)));
+					}
+					commandIndex++;
+				}
+			}
 		}
-	}
-	else
-	{
-		Reset();
 	}
 }
 
@@ -42,6 +63,12 @@ void UCommanderHudWidgetBase::Reset()
 {
 	for (auto* child : CommanderButtonContainer->GetAllChildren())
 	{
-		child->SetVisibility(ESlateVisibility::Hidden);
+		if (auto* horizontalBox = Cast<UHorizontalBox>(child))
+		{
+			for (auto button : horizontalBox->GetAllChildren())
+			{
+				button->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
 	}
 }
