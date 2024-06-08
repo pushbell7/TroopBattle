@@ -4,12 +4,15 @@
 #include "UnitBase.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Runtime/AIModule/Classes/Navigation/PathFollowingComponent.h>
+#include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
+
 // Sets default values
 AUnitBase::AUnitBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	PropertiesComponent = CreateDefaultSubobject<UUnitPropertiesComponent>(TEXT("PropertiesComponent"));
 }
 
 // Called when the game starts or when spawned

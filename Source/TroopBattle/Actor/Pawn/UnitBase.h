@@ -22,6 +22,9 @@ private:
 	EAction CurrentState;
 	FVector TargetPosition;
 
+	UPROPERTY(VisibleAnywhere)
+	class UUnitPropertiesComponent* PropertiesComponent;
+
 public:
 	// Sets default values for this character's properties
 	AUnitBase();

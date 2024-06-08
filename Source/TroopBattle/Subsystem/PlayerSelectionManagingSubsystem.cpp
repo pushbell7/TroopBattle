@@ -3,6 +3,7 @@
 
 #include "PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
+#include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
 
 const TArray<AActor*>& UPlayerSelectionManagingSubsystem::GetSelectedActors() const
 {
@@ -52,30 +53,37 @@ void UPlayerSelectionManagingSubsystem::Command(ECommandType type, const FVector
 
 TArray<ECommandType> UPlayerSelectionManagingSubsystem::GetEnabledCommands() const
 {
-	TArray<ECommandType> result;
+	TMap<ECommandType, int32> tableToGetCommon;
 	
 	// get actor info and assemble common functions actors can
 	for (auto* actor : SelectedActors)
 	{
-		if (auto* controller = actor->GetInstigatorController<APlayerController>())
+		if (auto* controller = actor->GetInstigatorController<AAIController>())
 		{
-			//controller->GetPlayerState<APlayerState>();
+			if (auto unit = controller->GetInstigator<AUnitBase>())
+			{
+				auto unitProperties = unit->GetComponentByClass<UUnitPropertiesComponent>();
+				auto commands = unitProperties->GetCommandsWhichCanDo();
+				for (auto command : commands)
+				{
+					tableToGetCommon.FindOrAdd(command)++;
+				}
+			}
 		}
 	}
 
-	//temporary setting
-	if (SelectedActors.IsEmpty()) return result;
+	TArray<ECommandType> result;
+	int32 selectedActorsCount = SelectedActors.Num();
 
-	result.Add(ECommandType::Move);
-	result.Add(ECommandType::Stop);
-	result.Add(ECommandType::None);
+	if (selectedActorsCount == 0) return result;
 
-	result.Add(ECommandType::Attack);
-	result.Add(ECommandType::None);
-	result.Add(ECommandType::None);
-
-	result.Add(ECommandType::None);
-	result.Add(ECommandType::None);
+	for (auto command : tableToGetCommon)
+	{
+		if (command.Value == selectedActorsCount)
+		{
+			result.Add(command.Key);
+		}
+	}
 
 	return result;
 }
