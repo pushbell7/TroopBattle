@@ -24,8 +24,7 @@ void UUnitPropertiesComponent::BeginPlay()
 
 	// temporary setting
 
-	auto randomPrototype = FMath::RandRange(0, static_cast<int32>(EUnitPrototype::Max) - 1);
-	Prototype = static_cast<EUnitPrototype>(randomPrototype);
+	Prototype = EUnitPrototype::Infantry;
 
 
 }
@@ -45,18 +44,23 @@ TArray<ECommandType> UUnitPropertiesComponent::GetCommandsWhichCanDo() const
 
 	result.Add(ECommandType::Stop);
 
-	// @TODO: from each unit, make commands they can
 	switch (Prototype)
 	{
-	case EUnitPrototype::Fixed:
-		result.Add(ECommandType::Attack);
-		break;
-	case EUnitPrototype::Movable:
+	case EUnitPrototype::Infantry:
 		result.Add(ECommandType::Move);
+		result.Add(ECommandType::ChangeMovingMethod);
+		result.Add(ECommandType::Stop);
+		result.Add(ECommandType::Observe);
+		result.Add(ECommandType::Hold);
 		break;
-	case EUnitPrototype::Attackable:
-		result.Add(ECommandType::Attack);
+	case EUnitPrototype::Artillery:
+		result.Add(ECommandType::Observe);
+		result.Add(ECommandType::Hold);
+		break;
+	case EUnitPrototype::Armor:
 		result.Add(ECommandType::Move);
+		result.Add(ECommandType::Observe);
+		result.Add(ECommandType::Hold);
 		break;
 	default:
 		return TArray<ECommandType>();

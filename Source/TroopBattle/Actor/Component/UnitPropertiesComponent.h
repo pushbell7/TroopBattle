@@ -16,9 +16,9 @@ class TROOPBATTLE_API UUnitPropertiesComponent : public UActorComponent
 public:
 	enum class EUnitPrototype
 	{
-		Movable,
-		Fixed,
-		Attackable,
+		Infantry,
+		Artillery,
+		Armor,
 		Max
 	};
 

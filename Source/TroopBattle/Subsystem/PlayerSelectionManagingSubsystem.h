@@ -11,9 +11,10 @@ enum class ECommandType
 {
 	None,
 	Move,
+	ChangeMovingMethod,
 	Stop,
-	Attack,
-
+	Observe,
+	Hold,
 };
 
 static const TCHAR* EnumToString(ECommandType type)
@@ -22,8 +23,10 @@ static const TCHAR* EnumToString(ECommandType type)
 	{
 	case ECommandType::None: return TEXT("None");
 	case ECommandType::Move: return TEXT("Move");
+	case ECommandType::ChangeMovingMethod: return TEXT("ChangeMovingMethod");
 	case ECommandType::Stop: return TEXT("Stop");
-	case ECommandType::Attack: return TEXT("Attack");
+	case ECommandType::Observe: return TEXT("Observe");
+	case ECommandType::Hold: return TEXT("Hold");
 	default: return TEXT("None");
 	}
 }
