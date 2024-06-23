@@ -7,6 +7,9 @@
 #include <Components/TextBlock.h>
 #include <Components/Button.h>
 #include "CommandButtonBase.generated.h"
+
+enum class ECommandType;
+
 /**
  * 
  */
@@ -22,4 +25,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), category = "UI")
 	UButton* Button;
 	
+private:
+	ECommandType CommandType;
+
+public:
+	virtual bool Initialize() override;
+
+	UFUNCTION()
+	void HandleClicked();
+
+
+	void SetCommandType(ECommandType type);
 };

@@ -27,7 +27,4 @@ public:
 
 private:
 	void Reset();
-
-	UFUNCTION()
-	void HandleClicked();
 };

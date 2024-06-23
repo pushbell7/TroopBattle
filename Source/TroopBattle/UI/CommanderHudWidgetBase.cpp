@@ -43,16 +43,7 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 					{
 						type = commands[commandIndex];
 					}
-					if (type == ECommandType::None)
-					{
-						button->SetVisibility(ESlateVisibility::Hidden);
-					}
-					else
-					{
-						button->SetVisibility(ESlateVisibility::Visible);
-						button->Label->SetText(FText::FromString(EnumToString(type)));
-						button->Button->OnClicked.AddDynamic(this, &UCommanderHudWidgetBase::HandleClicked);
-					}
+					button->SetCommandType(type);
 					commandIndex++;
 				}
 			}
@@ -68,13 +59,8 @@ void UCommanderHudWidgetBase::Reset()
 		{
 			for (auto button : horizontalBox->GetAllChildren())
 			{
-				button->SetVisibility(ESlateVisibility::Hidden);
+				dynamic_cast<UCommandButtonBase*>(button)->SetCommandType(ECommandType::None);
 			}
 		}
 	}
-}
-
-void UCommanderHudWidgetBase::HandleClicked()
-{
-	UE_LOG(LogTemp, Log, TEXT("clicked"));
 }
