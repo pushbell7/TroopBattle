@@ -51,6 +51,7 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 					{
 						button->SetVisibility(ESlateVisibility::Visible);
 						button->Label->SetText(FText::FromString(EnumToString(type)));
+						button->Button->OnClicked.AddDynamic(this, &UCommanderHudWidgetBase::HandleClicked);
 					}
 					commandIndex++;
 				}
@@ -71,4 +72,9 @@ void UCommanderHudWidgetBase::Reset()
 			}
 		}
 	}
+}
+
+void UCommanderHudWidgetBase::HandleClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("clicked"));
 }

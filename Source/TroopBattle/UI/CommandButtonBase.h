@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Components/TextBlock.h>
+#include <Components/Button.h>
 #include "CommandButtonBase.generated.h"
 /**
  * 
@@ -17,4 +18,8 @@ class TROOPBATTLE_API UCommandButtonBase : public UUserWidget
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), category = "UI")
 	UTextBlock* Label;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), category = "UI")
+	UButton* Button;
+	
 };
