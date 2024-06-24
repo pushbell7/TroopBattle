@@ -51,6 +51,17 @@ void UPlayerSelectionManagingSubsystem::Command(ECommandType type, const FVector
 	}
 }
 
+void UPlayerSelectionManagingSubsystem::Command(ECommandType type)
+{
+	for (auto* actor : SelectedActors)
+	{
+		if (auto* unit = dynamic_cast<AUnitBase*>(actor))
+		{
+			unit->SetCommand(type);
+		}
+	}
+}
+
 TArray<ECommandType> UPlayerSelectionManagingSubsystem::GetEnabledCommands() const
 {
 	TMap<ECommandType, int32> tableToGetCommon;
@@ -86,6 +97,27 @@ TArray<ECommandType> UPlayerSelectionManagingSubsystem::GetEnabledCommands() con
 	}
 
 	return result;
+}
+
+bool UPlayerSelectionManagingSubsystem::HasCallback() const
+{
+	return RegistedAction != ECommandType::None;
+}
+
+void UPlayerSelectionManagingSubsystem::RegistCallback(ECommandType type)
+{
+	RegistedAction = type;
+}
+
+void UPlayerSelectionManagingSubsystem::RemoveCallback()
+{
+	RegistedAction = ECommandType::None;
+}
+
+void UPlayerSelectionManagingSubsystem::RunCallback(const FVector& targetPosition)
+{
+	Command(RegistedAction, targetPosition);
+	RemoveCallback();
 }
 
 FVector UPlayerSelectionManagingSubsystem::GetCenterPosition() const

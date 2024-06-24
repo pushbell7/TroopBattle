@@ -5,6 +5,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Runtime/AIModule/Classes/Navigation/PathFollowingComponent.h>
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
+#include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
 
 // Sets default values
 AUnitBase::AUnitBase()
@@ -43,22 +44,39 @@ void AUnitBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AUnitBase::SetCommand(ECommandType type)
+{
+	switch (type)
+	{
+	case ECommandType::ChangeMovingMethod:
+		ChangeMovementStrategy( static_cast<EMovementStrategy>((static_cast<int>(MovementStrategy) + 1) % static_cast<int>(EMovementStrategy::Max)));
+		break;
+	case ECommandType::Observe:
+
+		break;
+	case ECommandType::Hold:
+
+		break;
+	case ECommandType::Stop:
+
+		break;
+	}
+}
+
 void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 {
-	ChangeState(EAction::Move);
 	TargetPosition = GetActorLocation() + deltaPosition;
 	auto* aiController = GetInstigatorController<AAIController>();
 	auto result = aiController->MoveToLocation(TargetPosition);
 }
 
-void AUnitBase::ChangeState(EAction action)
+void AUnitBase::ChangeMovementStrategy(EMovementStrategy strategy)
 {
-	CurrentState = action;
+	MovementStrategy = strategy;
 }
 
 void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result)
 {
-	ChangeState(EAction::Stop);
 	UE_LOG(LogTemp, Log, TEXT("move is done"));
 }
 

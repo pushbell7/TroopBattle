@@ -102,13 +102,24 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 		FVector2D mousePosition;
 		playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
 
+		auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 		if (SelectionStartPosition.IsZero())
 		{
-			GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->ResetSelection();
+			if (selectionManager->HasCallback())
+			{
+				FHitResult hitResult;
+				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
 
-			FHitResult hitResult;
-			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
-			SelectionStartPosition = hitResult.Location;
+				selectionManager->RunCallback(hitResult.Location);
+			}
+			else
+			{
+				selectionManager->ResetSelection();
+
+				FHitResult hitResult;
+				playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+				SelectionStartPosition = hitResult.Location;
+			}
 		}
 		else
 		{
@@ -129,7 +140,7 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 				FVector scale = (endPosition - SelectionStartPosition) / 2;
 				actor->SetActorRelativeScale3D(FVector(FMath::Abs(scale.X), FMath::Abs(scale.Y), FMath::Abs(scale.Z) + 10));
 
-				const auto& selectedActors = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->GetSelectedActors();
+				const auto& selectedActors = selectionManager->GetSelectedActors();
 				UE_LOG(LogTemp, Log, TEXT("selected : %d"), selectedActors.Num());
 				SelectionStartPosition = FVector::ZeroVector;
 								
@@ -146,14 +157,22 @@ void ACommander::HandleCommandAction(const FInputActionValue& Value)
 {
 	if (auto* playerController = GetController<APlayerController>())
 	{
-		FVector2D mousePosition;
-		playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
+		auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 
-		FHitResult hitResult;
-		playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
+		if (selectionManager->HasCallback())
+		{
+			selectionManager->RemoveCallback();
+		}
+		else
+		{
+			FVector2D mousePosition;
+			playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
 
-		GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->Command(ECommandType::Move, hitResult.Location);
+			FHitResult hitResult;
+			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
 
+			GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->Command(ECommandType::Move, hitResult.Location);
+		}
 	}
 }
 

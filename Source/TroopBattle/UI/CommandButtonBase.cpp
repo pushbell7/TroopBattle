@@ -2,6 +2,7 @@
 
 #include "CommandButtonBase.h"
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
+#include "TroopBattle/Actor/Pawn/UnitBase.h"
 
 
 bool UCommandButtonBase::Initialize()
@@ -16,23 +17,16 @@ bool UCommandButtonBase::Initialize()
 void UCommandButtonBase::HandleClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("type : %s"),  EnumToString(CommandType));
+
+	auto selectionSubsystem = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 	switch (CommandType)
 	{
 	case ECommandType::Move:
 		// make callback to destination
+		selectionSubsystem->RegistCallback(CommandType);
 		break;
-	case ECommandType::ChangeMovingMethod:
-		// change internal state
-		break;
-	case ECommandType::Stop:
-		// change internal state
-		break;
-	case ECommandType::Observe:
-		// change internal state
-		break;
-	case ECommandType::Hold:
-		// change internal state
-		break;
+	default:
+		selectionSubsystem->Command(CommandType);
 	}
 }
 
@@ -49,6 +43,15 @@ void UCommandButtonBase::SetCommandType(ECommandType type)
 	else
 	{
 		SetVisibility(ESlateVisibility::Visible);
-		Label->SetText(FText::FromString(EnumToString(type)));
+		if (type == ECommandType::ChangeMovingMethod)
+		{
+			auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+			auto unit = Cast<AUnitBase>(selectionManager->GetRepresentativeActor());
+			Label->SetText(FText::FromString(EnumToString(unit->GetMovementStrategy())));
+		}
+		else
+		{
+			Label->SetText(FText::FromString(EnumToString(type)));
+		}
 	}
 }

@@ -7,23 +7,43 @@
 #include <Runtime/AIModule/Classes/AIController.h>
 #include "UnitBase.generated.h"
 
+enum class ECommandType;
+
+UENUM()
+enum class EMovementStrategy
+{
+	Walk,
+	Crawling,
+	TacticalMovement,
+	Chasing,
+	EscapingRunning,
+	Max
+};
+static const TCHAR* EnumToString(EMovementStrategy type)
+{
+	switch (type)
+	{
+	case EMovementStrategy::Walk: return TEXT("Walk");
+	case EMovementStrategy::Crawling: return TEXT("Crawling");
+	case EMovementStrategy::TacticalMovement: return TEXT("TacticalMovement");
+	case EMovementStrategy::Chasing: return TEXT("Chasing");
+	case EMovementStrategy::EscapingRunning: return TEXT("EscapingRunning");
+	default: return TEXT("None");
+	}
+}
+
 UCLASS()
 class TROOPBATTLE_API AUnitBase : public ACharacter
 {
 	GENERATED_BODY()
 
 private:
-	enum class EAction
-	{
-		Stop,
-		Move,
-	};
-
-	EAction CurrentState;
 	FVector TargetPosition;
 
 	UPROPERTY(VisibleAnywhere)
 	class UUnitPropertiesComponent* PropertiesComponent;
+
+	EMovementStrategy MovementStrategy;
 
 public:
 	// Sets default values for this character's properties
@@ -40,9 +60,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	void SetCommand(ECommandType type);
 	void SetMovingPosition(const FVector& deltaPosition);
-	void ChangeState(EAction action);
+	EMovementStrategy GetMovementStrategy() const { return MovementStrategy; }
+	void ChangeMovementStrategy(EMovementStrategy strategy);
 
 private:
 	UFUNCTION()

@@ -43,6 +43,8 @@ private:
 	UPROPERTY()
 	TArray<AActor*> SelectedActors;
 
+	ECommandType RegistedAction;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -57,8 +59,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Command(ECommandType type, const FVector& targetPosition);
+	void Command(ECommandType type);
 
 	TArray<ECommandType> GetEnabledCommands() const;
+
+	bool HasCallback() const;
+	void RegistCallback(ECommandType type);
+	void RemoveCallback();
+	void RunCallback(const FVector& targetPosition);
 
 private:
 	FVector GetCenterPosition() const;
