@@ -25,6 +25,10 @@ void UCommandButtonBase::HandleClicked()
 		// make callback to destination
 		selectionSubsystem->RegistCallback(CommandType);
 		break;
+	case ECommandType::ChangeMovingMethod:
+		selectionSubsystem->Command(CommandType);
+		SetCommandType(CommandType);
+		break;
 	default:
 		selectionSubsystem->Command(CommandType);
 	}
@@ -32,8 +36,6 @@ void UCommandButtonBase::HandleClicked()
 
 void UCommandButtonBase::SetCommandType(ECommandType type)
 {
-	if (CommandType == type) return;
-
 	CommandType = type;
 
 	if (type == ECommandType::None)
