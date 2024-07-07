@@ -63,6 +63,7 @@ public:
 
 	TArray<ECommandType> GetEnabledCommands() const;
 
+	UFUNCTION(BlueprintCallable)
 	bool HasCallback() const;
 	void RegistCallback(ECommandType type);
 	void RemoveCallback();
