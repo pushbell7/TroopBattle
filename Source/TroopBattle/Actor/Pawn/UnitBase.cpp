@@ -35,13 +35,30 @@ void AUnitBase::PossessedBy(AController* controller)
 void AUnitBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bObserving)
+	{
+		auto location = GetActorLocation();
+		AccumulatedTime += DeltaTime;
+		auto rotatedDirection = GetActorForwardVector().RotateAngleAxis(FMathf::Sin(AccumulatedTime) * 45, FVector::UpVector);
+		auto endOfSight = location + rotatedDirection * 1000;
+
+		DrawDebugLine(GetWorld(), location, endOfSight, FColor::Green);
+		
+		FHitResult hitResult;
+		FCollisionQueryParams collisionParams;
+		collisionParams.AddIgnoredActor(this); // Ignore the character itself
+		bool bHit = GetWorld()->LineTraceSingleByChannel(hitResult, location, endOfSight, ECC_WorldDynamic, collisionParams);
+		if (bHit)
+		{
+			UE_LOG(LogTemp, Log, TEXT("%s"), *hitResult.GetActor()->GetName());
+		}
+	}
 }
 
 // Called to bind functionality to input
 void AUnitBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AUnitBase::SetCommand(ECommandType type)
@@ -52,7 +69,7 @@ void AUnitBase::SetCommand(ECommandType type)
 		ChangeMovementStrategy( static_cast<EMovementStrategy>((static_cast<int>(MovementStrategy) + 1) % static_cast<int>(EMovementStrategy::Max)));
 		break;
 	case ECommandType::Observe:
-
+		Observe();
 		break;
 	case ECommandType::Hold:
 
@@ -73,6 +90,11 @@ void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 void AUnitBase::ChangeMovementStrategy(EMovementStrategy strategy)
 {
 	MovementStrategy = strategy;
+}
+
+void AUnitBase::Observe()
+{
+	bObserving = true;
 }
 
 void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result)

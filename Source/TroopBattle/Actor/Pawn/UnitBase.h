@@ -44,7 +44,8 @@ private:
 	class UUnitPropertiesComponent* PropertiesComponent;
 
 	EMovementStrategy MovementStrategy;
-
+	bool bObserving;
+	float AccumulatedTime;
 public:
 	// Sets default values for this character's properties
 	AUnitBase();
@@ -64,6 +65,7 @@ public:
 	void SetMovingPosition(const FVector& deltaPosition);
 	EMovementStrategy GetMovementStrategy() const { return MovementStrategy; }
 	void ChangeMovementStrategy(EMovementStrategy strategy);
+	void Observe();
 
 private:
 	UFUNCTION()
