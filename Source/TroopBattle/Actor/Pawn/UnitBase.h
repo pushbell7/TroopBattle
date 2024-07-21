@@ -46,6 +46,10 @@ private:
 	EMovementStrategy MovementStrategy;
 	bool bObserving;
 	float AccumulatedTime;
+	float ObservingDistance;
+	float ObservingAngleDegree;
+	float ObservingAngleSpeed;
+
 public:
 	// Sets default values for this character's properties
 	AUnitBase();

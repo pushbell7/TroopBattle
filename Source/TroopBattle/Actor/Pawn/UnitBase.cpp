@@ -20,7 +20,9 @@ AUnitBase::AUnitBase()
 void AUnitBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ObservingDistance = 100;
+	ObservingAngleDegree = 45;
+	ObservingAngleSpeed = 45;
 }
 
 void AUnitBase::PossessedBy(AController* controller)
@@ -38,9 +40,10 @@ void AUnitBase::Tick(float DeltaTime)
 	if (bObserving)
 	{
 		auto location = GetActorLocation();
-		AccumulatedTime += DeltaTime;
-		auto rotatedDirection = GetActorForwardVector().RotateAngleAxis(FMathf::Sin(AccumulatedTime) * 45, FVector::UpVector);
-		auto endOfSight = location + rotatedDirection * 1000;
+		AccumulatedTime += DeltaTime * ObservingAngleSpeed / ObservingAngleDegree;
+		auto currentAngle = FMath::Fmod(AccumulatedTime, 2.0f * ObservingAngleDegree) - ObservingAngleDegree;
+		auto rotatedDirection = GetActorForwardVector().RotateAngleAxis(FMathf::Sin(AccumulatedTime) * ObservingAngleDegree, FVector::UpVector);
+		auto endOfSight = location + rotatedDirection * ObservingDistance;
 
 		DrawDebugLine(GetWorld(), location, endOfSight, FColor::Green);
 		
@@ -95,6 +98,8 @@ void AUnitBase::ChangeMovementStrategy(EMovementStrategy strategy)
 void AUnitBase::Observe()
 {
 	bObserving = true;
+	ObservingDistance = 50 + FMath::Rand() % 100;
+	ObservingAngleDegree = 30 + FMath::Rand() % 90;
 }
 
 void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result)
