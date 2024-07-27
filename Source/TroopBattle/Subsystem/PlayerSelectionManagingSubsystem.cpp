@@ -69,16 +69,13 @@ TArray<ECommandType> UPlayerSelectionManagingSubsystem::GetEnabledCommands() con
 	// get actor info and assemble common functions actors can
 	for (auto* actor : SelectedActors)
 	{
-		if (auto* controller = actor->GetInstigatorController<AAIController>())
+		if (auto unit = Cast<AUnitBase>(actor))
 		{
-			if (auto unit = controller->GetInstigator<AUnitBase>())
+			auto unitProperties = unit->GetComponentByClass<UUnitPropertiesComponent>();
+			auto commands = unitProperties->GetCommandsWhichCanDo();
+			for (auto command : commands)
 			{
-				auto unitProperties = unit->GetComponentByClass<UUnitPropertiesComponent>();
-				auto commands = unitProperties->GetCommandsWhichCanDo();
-				for (auto command : commands)
-				{
-					tableToGetCommon.FindOrAdd(command)++;
-				}
+				tableToGetCommon.FindOrAdd(command)++;
 			}
 		}
 	}

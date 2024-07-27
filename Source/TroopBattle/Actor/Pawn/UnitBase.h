@@ -44,6 +44,7 @@ private:
 	class UUnitPropertiesComponent* PropertiesComponent;
 
 	EMovementStrategy MovementStrategy;
+	UPROPERTY(Replicated)
 	bool bObserving;
 	float AccumulatedTime;
 	float ObservingDistance;
@@ -58,6 +59,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* controller) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -74,4 +77,5 @@ public:
 private:
 	UFUNCTION()
 	void HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result);
+
 };

@@ -5,6 +5,7 @@
 #include <Components/PanelWidget.h>
 #include <TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h>
 #include <Components/HorizontalBox.h>
+#include <GameFramework/GameState.h>
 #include "CommandButtonBase.h"
 
 bool UCommanderHudWidgetBase::Initialize()
@@ -26,7 +27,8 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 {
 	UE_LOG(LogTemp, Log, TEXT("RefreshCommandButtons"));
 
-	auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+	auto controller = *(GetWorld()->GetPlayerControllerIterator() + GetWorld()->PlayerNum);
+	auto selectionManager = controller->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 	
 	auto commands = selectionManager->GetEnabledCommands();
 	int commandIndex = 0;

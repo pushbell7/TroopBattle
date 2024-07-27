@@ -40,5 +40,6 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 
 	UE_LOG(LogTemp, Log, TEXT("possess %s"), *aPawn->GetHumanReadableName());
 
-	GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, aPawn->GetTransform());
+	auto actor = GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, aPawn->GetTransform());
+	actor->SetOwner(this);
 }

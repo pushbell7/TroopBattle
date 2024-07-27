@@ -6,6 +6,7 @@
 #include <Runtime/AIModule/Classes/Navigation/PathFollowingComponent.h>
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
+#include <Net/UnrealNetwork.h>
 
 // Sets default values
 AUnitBase::AUnitBase()
@@ -14,6 +15,8 @@ AUnitBase::AUnitBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	PropertiesComponent = CreateDefaultSubobject<UUnitPropertiesComponent>(TEXT("PropertiesComponent"));
+
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +34,13 @@ void AUnitBase::PossessedBy(AController* controller)
 
 	auto* aiController = dynamic_cast<AAIController*>(controller);
 	aiController->ReceiveMoveCompleted.AddDynamic(this, &AUnitBase::HandleMoveCompleted);
+}
+
+void AUnitBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AUnitBase, bObserving);
 }
 
 // Called every frame
@@ -86,8 +96,10 @@ void AUnitBase::SetCommand(ECommandType type)
 void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 {
 	TargetPosition = GetActorLocation() + deltaPosition;
-	auto* aiController = GetInstigatorController<AAIController>();
-	auto result = aiController->MoveToLocation(TargetPosition);
+	if (auto* aiController = GetInstigatorController<AAIController>())
+	{
+		auto result = aiController->MoveToLocation(TargetPosition);
+	}
 }
 
 void AUnitBase::ChangeMovementStrategy(EMovementStrategy strategy)
@@ -106,5 +118,6 @@ void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult
 {
 	UE_LOG(LogTemp, Log, TEXT("move is done"));
 }
+
 
 
