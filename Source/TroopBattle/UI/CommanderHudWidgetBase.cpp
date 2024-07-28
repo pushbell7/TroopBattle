@@ -3,10 +3,11 @@
 
 #include "CommanderHudWidgetBase.h"
 #include <Components/PanelWidget.h>
-#include <TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h>
 #include <Components/HorizontalBox.h>
 #include <GameFramework/GameState.h>
 #include "CommandButtonBase.h"
+#include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
+#include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 
 bool UCommanderHudWidgetBase::Initialize()
 {
@@ -27,26 +28,28 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 {
 	UE_LOG(LogTemp, Log, TEXT("RefreshCommandButtons"));
 
-	auto controller = *(GetWorld()->GetPlayerControllerIterator() + GetWorld()->PlayerNum);
-	auto selectionManager = controller->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
-	
-	auto commands = selectionManager->GetEnabledCommands();
-	int commandIndex = 0;
-	for (auto* child : CommanderButtonContainer->GetAllChildren())
+	if (auto* localPlayer = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetLocalPlayer())
 	{
-		if (auto* horizontalBox = Cast<UHorizontalBox>(child))
+		auto selectionManager = localPlayer->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+
+		auto commands = selectionManager->GetEnabledCommands();
+		int commandIndex = 0;
+		for (auto* child : CommanderButtonContainer->GetAllChildren())
 		{
-			for (int i = 0; i < horizontalBox->GetChildrenCount(); ++i)
+			if (auto* horizontalBox = Cast<UHorizontalBox>(child))
 			{
-				if (auto button = dynamic_cast<UCommandButtonBase*>(horizontalBox->GetChildAt(i)))
+				for (int i = 0; i < horizontalBox->GetChildrenCount(); ++i)
 				{
-					ECommandType type = ECommandType::None;
-					if (commandIndex < commands.Num())
+					if (auto button = dynamic_cast<UCommandButtonBase*>(horizontalBox->GetChildAt(i)))
 					{
-						type = commands[commandIndex];
+						ECommandType type = ECommandType::None;
+						if (commandIndex < commands.Num())
+						{
+							type = commands[commandIndex];
+						}
+						button->SetCommandType(type);
+						commandIndex++;
 					}
-					button->SetCommandType(type);
-					commandIndex++;
 				}
 			}
 		}

@@ -17,6 +17,7 @@ AUnitBase::AUnitBase()
 	PropertiesComponent = CreateDefaultSubobject<UUnitPropertiesComponent>(TEXT("PropertiesComponent"));
 
 	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -95,10 +96,16 @@ void AUnitBase::SetCommand(ECommandType type)
 
 void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 {
-	TargetPosition = GetActorLocation() + deltaPosition;
-	if (auto* aiController = GetInstigatorController<AAIController>())
+	if (HasAuthority())
 	{
-		auto result = aiController->MoveToLocation(TargetPosition);
+		if (auto* aiController = GetInstigatorController<AAIController>())
+		{
+			auto result = aiController->MoveToLocation(GetActorLocation() + deltaPosition);
+		}
+	}
+	else
+	{
+		ServerMoveActor(GetActorLocation() + deltaPosition);
 	}
 }
 
@@ -119,5 +126,15 @@ void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult
 	UE_LOG(LogTemp, Log, TEXT("move is done"));
 }
 
+bool AUnitBase::ServerMoveActor_Validate(const FVector& newLocation)
+{
+	return true;
+}
 
-
+void AUnitBase::ServerMoveActor_Implementation(const FVector& newLocation)
+{
+	if (auto* aiController = GetInstigatorController<AAIController>())
+	{
+		auto result = aiController->MoveToLocation(newLocation);
+	}
+}

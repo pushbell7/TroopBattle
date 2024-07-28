@@ -38,7 +38,6 @@ class TROOPBATTLE_API AUnitBase : public ACharacter
 	GENERATED_BODY()
 
 private:
-	FVector TargetPosition;
 
 	UPROPERTY(VisibleAnywhere)
 	class UUnitPropertiesComponent* PropertiesComponent;
@@ -77,5 +76,9 @@ public:
 private:
 	UFUNCTION()
 	void HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result);
-
+	
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerMoveActor(const FVector& newLocation);
+	bool ServerMoveActor_Validate(const FVector& newLocation);
+	void ServerMoveActor_Implementation(const FVector& newLocation);
 };
