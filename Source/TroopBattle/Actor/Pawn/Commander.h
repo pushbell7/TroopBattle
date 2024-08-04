@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "UnitBase.h"
 #include "Commander.generated.h"
 
 UCLASS()
@@ -48,6 +49,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(Server, Reliable)
+	void RequestCommand(const TArray<AActor*>& units, ECommandType commandType);
+	void RequestCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType);
+
+	UFUNCTION(Server, Reliable)
+	void RequestTargetCommand(const TArray<AActor*>& units, ECommandType commandType, FVector targetPosition);
+	void RequestTargetCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType, FVector targetPosition);
 
 private:
 	void HandleSelectingAction(const struct FInputActionValue& Value);

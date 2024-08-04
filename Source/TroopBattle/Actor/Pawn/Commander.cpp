@@ -95,6 +95,31 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 }
 
+void ACommander::RequestCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType)
+{
+	for (auto* actor : units)
+	{
+		if (auto* unit = Cast<AUnitBase>(actor))
+		{
+			unit->SetCommand(commandType);
+		}
+	}
+}
+
+void ACommander::RequestTargetCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType, FVector targetPosition)
+{
+	for (auto* actor : units)
+	{
+		if (auto* unit = Cast<AUnitBase>(actor))
+		{
+			if (commandType == ECommandType::Move)
+			{
+				unit->SetMovingPosition(targetPosition);
+			}
+		}
+	}
+}
+
 void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 {
 	if (auto* playerController = GetController<APlayerController>())
@@ -170,8 +195,8 @@ void ACommander::HandleCommandAction(const FInputActionValue& Value)
 
 			FHitResult hitResult;
 			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
-
-			GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>()->Command(ECommandType::Move, hitResult.Location);
+			auto* selectionSubsystem = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+			selectionSubsystem->RunCallback(hitResult.Location);
 		}
 	}
 }

@@ -77,8 +77,4 @@ private:
 	UFUNCTION()
 	void HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result);
 	
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerMoveActor(const FVector& newLocation);
-	bool ServerMoveActor_Validate(const FVector& newLocation);
-	void ServerMoveActor_Implementation(const FVector& newLocation);
 };

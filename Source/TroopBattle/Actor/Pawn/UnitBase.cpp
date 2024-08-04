@@ -4,9 +4,10 @@
 #include "UnitBase.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Runtime/AIModule/Classes/Navigation/PathFollowingComponent.h>
+#include <Net/UnrealNetwork.h>
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
-#include <Net/UnrealNetwork.h>
+#include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 
 // Sets default values
 AUnitBase::AUnitBase()
@@ -96,16 +97,9 @@ void AUnitBase::SetCommand(ECommandType type)
 
 void AUnitBase::SetMovingPosition(const FVector& deltaPosition)
 {
-	if (HasAuthority())
+	if (auto* aiController = GetInstigatorController<AAIController>())
 	{
-		if (auto* aiController = GetInstigatorController<AAIController>())
-		{
-			auto result = aiController->MoveToLocation(GetActorLocation() + deltaPosition);
-		}
-	}
-	else
-	{
-		ServerMoveActor(GetActorLocation() + deltaPosition);
+		auto result = aiController->MoveToLocation(GetActorLocation() + deltaPosition);
 	}
 }
 
@@ -124,17 +118,4 @@ void AUnitBase::Observe()
 void AUnitBase::HandleMoveCompleted(FAIRequestID requestId, EPathFollowingResult::Type result)
 {
 	UE_LOG(LogTemp, Log, TEXT("move is done"));
-}
-
-bool AUnitBase::ServerMoveActor_Validate(const FVector& newLocation)
-{
-	return true;
-}
-
-void AUnitBase::ServerMoveActor_Implementation(const FVector& newLocation)
-{
-	if (auto* aiController = GetInstigatorController<AAIController>())
-	{
-		auto result = aiController->MoveToLocation(newLocation);
-	}
 }

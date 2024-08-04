@@ -4,6 +4,8 @@
 #include "PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
+#include "PlayerControllerSubsystem.h"
+#include "TroopBattle/Actor/Pawn/Commander.h"
 
 const TArray<AActor*>& UPlayerSelectionManagingSubsystem::GetSelectedActors() const
 {
@@ -30,13 +32,12 @@ void UPlayerSelectionManagingSubsystem::ResetSelection()
 	SelectedActors.Reset();
 }
 
-void UPlayerSelectionManagingSubsystem::Command(ECommandType type, const FVector& targetPosition)
+void UPlayerSelectionManagingSubsystem::Command(ECommandType type, const FVector& deltaPosition)
 {
 	switch (type)
 	{
 	case ECommandType::Move:
 	{
-		auto deltaPosition = targetPosition - GetCenterPosition();
 		for (auto* actor : SelectedActors)
 		{
 			if (auto* unit = dynamic_cast<AUnitBase*>(actor))
@@ -113,7 +114,9 @@ void UPlayerSelectionManagingSubsystem::RemoveCallback()
 
 void UPlayerSelectionManagingSubsystem::RunCallback(const FVector& targetPosition)
 {
-	Command(RegistedAction, targetPosition);
+	auto deltaPosition = targetPosition - GetCenterPosition();
+	auto commander = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPawn<ACommander>();
+	commander->RequestTargetCommand(GetSelectedActors(), ECommandType::Move, deltaPosition);
 	RemoveCallback();
 }
 

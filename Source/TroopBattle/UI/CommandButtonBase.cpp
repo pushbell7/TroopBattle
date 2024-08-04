@@ -3,6 +3,8 @@
 #include "CommandButtonBase.h"
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
+#include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
+#include "TroopBattle/Actor/Pawn/Commander.h"
 
 
 bool UCommandButtonBase::Initialize()
@@ -18,19 +20,16 @@ void UCommandButtonBase::HandleClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("type : %s"),  EnumToString(CommandType));
 
-	auto selectionSubsystem = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+	auto selectionSubsystem = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+	auto pawn = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPawn<ACommander>();
 	switch (CommandType)
 	{
 	case ECommandType::Move:
 		// make callback to destination
 		selectionSubsystem->RegistCallback(CommandType);
 		break;
-	case ECommandType::ChangeMovingMethod:
-		selectionSubsystem->Command(CommandType);
-		SetCommandType(CommandType);
-		break;
 	default:
-		selectionSubsystem->Command(CommandType);
+		pawn->RequestCommand(selectionSubsystem->GetSelectedActors(), CommandType);
 	}
 }
 
