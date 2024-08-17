@@ -73,6 +73,7 @@ void UUnitPropertiesComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UUnitPropertiesComponent, Master);
 	DOREPLIFETIME(UUnitPropertiesComponent, Stamina);
 	DOREPLIFETIME(UUnitPropertiesComponent, Speed);
 	DOREPLIFETIME(UUnitPropertiesComponent, Accuracy);

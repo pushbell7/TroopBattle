@@ -30,9 +30,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	class UBlueprint* SelectionBox;
-
 	FVector MovingDirection;
 	FVector SelectionStartPosition;
 public:

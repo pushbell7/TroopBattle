@@ -6,8 +6,9 @@
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetSystemLibrary.h>
 #include <GameFramework/GameModeBase.h>
-#include "../../Subsystem/PlayerSelectionManagingSubsystem.h"
-#include <TroopBattle/UI/HudBase.h>
+#include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
+#include "TroopBattle/UI/HudBase.h"
+#include "TroopBattle/Actor/UnitSelector.h"
 
 // Sets default values
 ACommander::ACommander()
@@ -55,9 +56,7 @@ ACommander::ACommander()
 	{
 		ScreenRightAction = ScreenRightActionResource.Object;
 	}
-
-	SelectionBox = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, TEXT("/Script/Engine.Blueprint'/Game/Actors/SelectionBox.SelectionBox'")));
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -160,7 +159,7 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 
 				FTransform transform;
 				transform.SetLocation((SelectionStartPosition + endPosition) / 2);
-				auto* actor = GetWorld()->SpawnActor<AActor>(SelectionBox->GeneratedClass, transform);
+				auto* actor = GetWorld()->SpawnActor<AActor>(AUnitSelector::StaticClass(), transform);
 
 				FVector scale = (endPosition - SelectionStartPosition) / 2;
 				actor->SetActorRelativeScale3D(FVector(FMath::Abs(scale.X), FMath::Abs(scale.Y), FMath::Abs(scale.Z) + 10));

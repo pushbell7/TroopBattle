@@ -5,8 +5,11 @@
 
 #include <InputMappingContext.h>
 #include <EnhancedInputSubsystems.h>
+#include <GameFramework/PlayerState.h>
 
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
+#include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
+#include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
 
 
 APlayerControllerBase::APlayerControllerBase()
@@ -43,4 +46,6 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	auto actor = GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, aPawn->GetTransform(), SpawnParams);
+	int index = GetPlayerState<APlayerState>()->PlayerId;
+	actor->GetComponentByClass<UUnitPropertiesComponent>()->SetMaster(index);
 }

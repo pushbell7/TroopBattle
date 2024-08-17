@@ -2,6 +2,7 @@
 
 
 #include "PlayerSelectionManagingSubsystem.h"
+#include <GameFramework/PlayerState.h>
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
 #include "PlayerControllerSubsystem.h"
@@ -24,7 +25,31 @@ AActor* UPlayerSelectionManagingSubsystem::GetRepresentativeActor() const
 
 void UPlayerSelectionManagingSubsystem::AddSelection(AActor* selectedActor)
 {
-	SelectedActors.Add(selectedActor);
+	if (Cast<AUnitBase>(selectedActor) == nullptr) return;
+
+	int me = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPlayerState<APlayerState>()->PlayerId;
+	int master = selectedActor->GetComponentByClass<UUnitPropertiesComponent>()->GetMaster();
+	
+	if (SelectedActors.Num() > 1)
+	{
+		if (me == master)
+		{
+			SelectedActors.Add(selectedActor);
+		}
+	}
+	else if(SelectedActors.IsEmpty())
+	{
+		SelectedActors.Add(selectedActor);
+	}
+	else
+	{
+		int selectedUnitMaster = SelectedActors[0]->GetComponentByClass<UUnitPropertiesComponent>()->GetMaster();
+		if (selectedUnitMaster != me)
+		{
+			SelectedActors.Pop();
+		}
+		SelectedActors.Add(selectedActor);
+	}
 }
 
 void UPlayerSelectionManagingSubsystem::ResetSelection()

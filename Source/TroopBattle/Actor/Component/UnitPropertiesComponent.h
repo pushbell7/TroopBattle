@@ -36,7 +36,13 @@ public:
 
 	TArray<enum class ECommandType> GetCommandsWhichCanDo() const;
 
+	int GetMaster() const { return Master; }
+	void SetMaster(int master) { Master = master; }
+
 private:
+	UPROPERTY(replicated)
+	int Master;
+
 	UPROPERTY(replicated)
 	int32 Stamina;
 
