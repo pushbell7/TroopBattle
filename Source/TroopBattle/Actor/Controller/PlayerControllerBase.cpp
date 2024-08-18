@@ -10,6 +10,7 @@
 #include "TroopBattle/Actor/Pawn/UnitBase.h"
 #include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 #include "TroopBattle/Actor/Component/UnitPropertiesComponent.h"
+#include "TroopBattle/Actor/Pawn/Commander.h"
 
 
 APlayerControllerBase::APlayerControllerBase()
@@ -43,7 +44,9 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 
 	UE_LOG(LogTemp, Log, TEXT("possess %s"), *aPawn->GetHumanReadableName());
 
-	SpawnTestActor(aPawn->GetTransform());
+	auto* commander = Cast<ACommander>(aPawn);
+	int index = GetPlayerState<APlayerState>()->PlayerId;
+	commander->RequestSpawnCommand(index, aPawn->GetActorLocation());
 }
 
 void APlayerControllerBase::SpawnTestActor(const FTransform& transform)

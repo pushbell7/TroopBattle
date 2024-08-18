@@ -20,8 +20,8 @@ void UCommandButtonBase::HandleClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("type : %s"),  EnumToString(CommandType));
 
-	auto selectionSubsystem = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
-	auto pawn = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPawn<ACommander>();
+	auto selectionSubsystem = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetSelectionManager();
+	auto pawn = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetMyController()->GetPawn<ACommander>();
 	switch (CommandType)
 	{
 	case ECommandType::Move:

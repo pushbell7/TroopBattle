@@ -6,10 +6,12 @@
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetSystemLibrary.h>
 #include <GameFramework/GameModeBase.h>
+#include <GameFramework/PlayerState.h>
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/UI/HudBase.h"
 #include "TroopBattle/Actor/UnitSelector.h"
 #include "TroopBattle/Actor/Controller/PlayerControllerBase.h"
+#include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 
 // Sets default values
 ACommander::ACommander()
@@ -130,6 +132,17 @@ void ACommander::RequestTargetCommand_Implementation(const TArray<AActor*>& unit
 				unit->SetMovingPosition(targetPosition);
 			}
 		}
+	}
+}
+
+void ACommander::RequestSpawnCommand_Implementation(int playerIndex, FVector targetPosition)
+{
+	if (auto* controller = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController(playerIndex))
+	{
+		auto* castedController = Cast<APlayerControllerBase>(controller);
+		FTransform transform;
+		transform.SetLocation(targetPosition);
+		castedController->SpawnTestActor(transform);
 	}
 }
 
@@ -266,7 +279,8 @@ void ACommander::HandleTestRightPressAction(const FInputActionValue& Value)
 
 void ACommander::HandleTest1PressAction(const FInputActionValue& Value)
 {
-	GetController<APlayerControllerBase>()->SpawnTestActor(GetTransform());
+	int index = GetPlayerState<APlayerState>()->PlayerId;
+	RequestSpawnCommand(index, GetActorLocation());
 }
 
 void ACommander::HandleTest2PressAction(const FInputActionValue& Value)

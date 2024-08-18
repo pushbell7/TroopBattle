@@ -28,9 +28,8 @@ void UCommanderHudWidgetBase::RefreshCommandButtons()
 {
 	UE_LOG(LogTemp, Log, TEXT("RefreshCommandButtons"));
 
-	if (auto* localPlayer = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetLocalPlayer())
 	{
-		auto selectionManager = localPlayer->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+		auto selectionManager = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetSelectionManager();
 
 		auto commands = selectionManager->GetEnabledCommands();
 		int commandIndex = 0;

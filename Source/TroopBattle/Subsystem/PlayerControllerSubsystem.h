@@ -17,8 +17,10 @@ class TROOPBATTLE_API UPlayerControllerSubsystem : public UWorldSubsystem
 
 public:
 
-	UFUNCTION(BlueprintCallable)
-	ULocalPlayer* GetLocalPlayer() const;
-	UFUNCTION()
-	TWeakObjectPtr<APlayerController> GetController() const;
+	int GetMyPlayerId() const;
+	APlayerController* GetMyController() const;
+	APlayerController* GetController(int playerIndex) const;
+
+	class UPlayerSelectionManagingSubsystem* GetSelectionManager() const;
+	
 };

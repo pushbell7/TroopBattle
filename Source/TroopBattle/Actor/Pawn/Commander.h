@@ -59,6 +59,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void RequestTargetCommand(const TArray<AActor*>& units, ECommandType commandType, FVector targetPosition);
 	void RequestTargetCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType, FVector targetPosition);
+	
+	UFUNCTION(Server, Reliable)
+	void RequestSpawnCommand(int playerIndex, FVector targetPosition);
+	void RequestSpawnCommand_Implementation(int playerIndex, FVector targetPosition);
 
 private:
 	void HandleSelectingAction(const struct FInputActionValue& Value);

@@ -27,7 +27,7 @@ void UPlayerSelectionManagingSubsystem::AddSelection(AActor* selectedActor)
 {
 	if (Cast<AUnitBase>(selectedActor) == nullptr) return;
 
-	int me = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPlayerState<APlayerState>()->PlayerId;
+	int me = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetMyPlayerId();
 	int master = selectedActor->GetComponentByClass<UUnitPropertiesComponent>()->GetMaster();
 
 	UE_LOG(LogTemp, Log, TEXT("selected me %d added %d"), me, master);
@@ -145,7 +145,7 @@ void UPlayerSelectionManagingSubsystem::RemoveCallback()
 void UPlayerSelectionManagingSubsystem::RunCallback(const FVector& targetPosition)
 {
 	auto deltaPosition = targetPosition - GetCenterPosition();
-	auto commander = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPawn<ACommander>();
+	auto commander = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetMyController()->GetPawn<ACommander>();
 	commander->RequestTargetCommand(GetSelectedActors(), ECommandType::Move, deltaPosition);
 	RemoveCallback();
 }

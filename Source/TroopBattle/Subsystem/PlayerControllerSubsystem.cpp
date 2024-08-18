@@ -3,17 +3,32 @@
 
 #include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 #include "PlayerControllerSubsystem.h"
+#include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
+#include <GameFramework/PlayerState.h>
 
-ULocalPlayer* UPlayerControllerSubsystem::GetLocalPlayer() const
+int UPlayerControllerSubsystem::GetMyPlayerId() const
 {
-	if (GetController().IsValid())
+	return GetWorld()->GetFirstPlayerController()->GetPlayerState<APlayerState>()->PlayerId;
+}
+
+APlayerController* UPlayerControllerSubsystem::GetMyController() const
+{
+	return GetController(GetMyPlayerId());
+}
+
+APlayerController* UPlayerControllerSubsystem::GetController(int playerIndex) const
+{
+	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; iter++)
 	{
-		return GetController()->GetLocalPlayer();
+		if (iter->Get()->GetPlayerState<APlayerState>()->PlayerId == playerIndex)
+		{
+			return iter->Get();
+		}
 	}
 	return nullptr;
 }
 
-TWeakObjectPtr<APlayerController> UPlayerControllerSubsystem::GetController() const
+UPlayerSelectionManagingSubsystem* UPlayerControllerSubsystem::GetSelectionManager() const
 {
-	return *(GetWorld()->GetPlayerControllerIterator() + GetWorld()->PlayerNum);
+	return GetMyController()->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 }
