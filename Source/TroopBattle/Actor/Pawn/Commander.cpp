@@ -9,6 +9,7 @@
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/UI/HudBase.h"
 #include "TroopBattle/Actor/UnitSelector.h"
+#include "TroopBattle/Actor/Controller/PlayerControllerBase.h"
 
 // Sets default values
 ACommander::ACommander()
@@ -56,7 +57,17 @@ ACommander::ACommander()
 	{
 		ScreenRightAction = ScreenRightActionResource.Object;
 	}
-	
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Test1ActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_Test1.IA_Test1'"));
+	if (Test1ActionResource.Succeeded())
+	{
+		Test1Action = Test1ActionResource.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UInputAction> Test2ActionResource(TEXT("/Script/EnhancedInput.InputAction'/Game/Common/Input/IA_Test2.IA_Test2'"));
+	if (Test2ActionResource.Succeeded())
+	{
+		Test2Action = Test2ActionResource.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -91,7 +102,10 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Input->BindAction(ScreenDownAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestDownPressAction);
 	Input->BindAction(ScreenLeftAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestLeftPressAction);
 	Input->BindAction(ScreenRightAction, ETriggerEvent::Triggered, this, &ACommander::HandleTestRightPressAction);
-	
+
+	Input->BindAction(Test1Action, ETriggerEvent::Triggered, this, &ACommander::HandleTest1PressAction);
+	Input->BindAction(Test2Action, ETriggerEvent::Triggered, this, &ACommander::HandleTest2PressAction);
+
 }
 
 void ACommander::RequestCommand_Implementation(const TArray<AActor*>& units, ECommandType commandType)
@@ -248,6 +262,16 @@ void ACommander::HandleTestRightPressAction(const FInputActionValue& Value)
 	{
 		SetMovingDirectionY(0);
 	}
+}
+
+void ACommander::HandleTest1PressAction(const FInputActionValue& Value)
+{
+	GetController<APlayerControllerBase>()->SpawnTestActor(GetTransform());
+}
+
+void ACommander::HandleTest2PressAction(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Do testing action"));
 }
 
 void ACommander::SetMovingDirectionX(float X)

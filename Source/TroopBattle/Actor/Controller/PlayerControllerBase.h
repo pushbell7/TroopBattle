@@ -26,5 +26,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
 
+	void SpawnTestActor(const FTransform& transform);
 
 };

@@ -29,7 +29,8 @@ void UPlayerSelectionManagingSubsystem::AddSelection(AActor* selectedActor)
 
 	int me = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->GetController()->GetPlayerState<APlayerState>()->PlayerId;
 	int master = selectedActor->GetComponentByClass<UUnitPropertiesComponent>()->GetMaster();
-	
+
+	UE_LOG(LogTemp, Log, TEXT("selected me %d added %d"), me, master);
 	if (SelectedActors.Num() > 1)
 	{
 		if (me == master)
@@ -47,8 +48,12 @@ void UPlayerSelectionManagingSubsystem::AddSelection(AActor* selectedActor)
 		if (selectedUnitMaster != me)
 		{
 			SelectedActors.Pop();
+			SelectedActors.Add(selectedActor);
 		}
-		SelectedActors.Add(selectedActor);
+		else if(me == master)
+		{
+			SelectedActors.Add(selectedActor);
+		}
 	}
 }
 

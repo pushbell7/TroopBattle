@@ -43,9 +43,14 @@ void APlayerControllerBase::OnPossess(APawn* aPawn)
 
 	UE_LOG(LogTemp, Log, TEXT("possess %s"), *aPawn->GetHumanReadableName());
 
+	SpawnTestActor(aPawn->GetTransform());
+}
+
+void APlayerControllerBase::SpawnTestActor(const FTransform& transform)
+{
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
-	auto actor = GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, aPawn->GetTransform(), SpawnParams);
+	auto actor = GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, transform, SpawnParams);
 	int index = GetPlayerState<APlayerState>()->PlayerId;
 	actor->GetComponentByClass<UUnitPropertiesComponent>()->SetMaster(index);
 }

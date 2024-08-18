@@ -28,6 +28,11 @@ private:
 	class UInputAction* ScreenRightAction;
 
 	UPROPERTY(VisibleAnywhere)
+	class UInputAction* Test1Action;
+	UPROPERTY(VisibleAnywhere)
+	class UInputAction* Test2Action;
+
+	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
 	FVector MovingDirection;
@@ -62,6 +67,9 @@ private:
 	void HandleTestDownPressAction(const struct FInputActionValue& Value);
 	void HandleTestLeftPressAction(const struct FInputActionValue& Value);
 	void HandleTestRightPressAction(const struct FInputActionValue& Value);
+
+	void HandleTest1PressAction(const struct FInputActionValue& Value);
+	void HandleTest2PressAction(const struct FInputActionValue& Value);
 
 	void SetMovingDirectionX(float X);
 	void SetMovingDirectionY(float Y);
