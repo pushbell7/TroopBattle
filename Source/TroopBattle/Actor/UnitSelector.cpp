@@ -35,7 +35,7 @@ void AUnitSelector::Tick(float DeltaTime)
 
 void AUnitSelector::OnBeginOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+	auto selectionManager = GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 	selectionManager->AddSelection(OtherActor);
 }
 

@@ -8,7 +8,7 @@
 
 int UPlayerControllerSubsystem::GetMyPlayerId() const
 {
-	return GetWorld()->GetFirstPlayerController()->GetPlayerState<APlayerState>()->PlayerId;
+	return GetWorld()->GetFirstPlayerController()->GetPlayerState<APlayerState>()->GetPlayerId();
 }
 
 APlayerController* UPlayerControllerSubsystem::GetMyController() const
@@ -20,7 +20,7 @@ APlayerController* UPlayerControllerSubsystem::GetController(int playerIndex) co
 {
 	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; iter++)
 	{
-		if (iter->Get()->GetPlayerState<APlayerState>()->PlayerId == playerIndex)
+		if (iter->Get()->GetPlayerState<APlayerState>()->GetPlayerId() == playerIndex)
 		{
 			return iter->Get();
 		}
@@ -30,5 +30,5 @@ APlayerController* UPlayerControllerSubsystem::GetController(int playerIndex) co
 
 UPlayerSelectionManagingSubsystem* UPlayerControllerSubsystem::GetSelectionManager() const
 {
-	return GetMyController()->GetLocalPlayer()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+	return GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 }

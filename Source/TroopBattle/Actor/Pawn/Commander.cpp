@@ -153,7 +153,7 @@ void ACommander::HandleSelectingAction(const FInputActionValue& Value)
 		FVector2D mousePosition;
 		playerController->GetMousePosition(mousePosition.X, mousePosition.Y);
 
-		auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+		auto selectionManager = GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 		if (SelectionStartPosition.IsZero())
 		{
 			if (selectionManager->HasCallback())
@@ -208,7 +208,7 @@ void ACommander::HandleCommandAction(const FInputActionValue& Value)
 {
 	if (auto* playerController = GetController<APlayerController>())
 	{
-		auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+		auto selectionManager = GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 
 		if (selectionManager->HasCallback())
 		{
@@ -221,7 +221,7 @@ void ACommander::HandleCommandAction(const FInputActionValue& Value)
 
 			FHitResult hitResult;
 			playerController->GetHitResultAtScreenPosition(mousePosition, ECollisionChannel::ECC_GameTraceChannel1, false, hitResult);
-			auto* selectionSubsystem = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+			auto* selectionSubsystem = GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 			selectionSubsystem->RunCallback(hitResult.Location);
 		}
 	}
@@ -279,7 +279,7 @@ void ACommander::HandleTestRightPressAction(const FInputActionValue& Value)
 
 void ACommander::HandleTest1PressAction(const FInputActionValue& Value)
 {
-	int index = GetPlayerState<APlayerState>()->PlayerId;
+	int index = GetPlayerState<APlayerState>()->GetPlayerId();
 	RequestSpawnCommand(index, GetActorLocation());
 }
 

@@ -46,7 +46,7 @@ void UCommandButtonBase::SetCommandType(ECommandType type)
 		SetVisibility(ESlateVisibility::Visible);
 		if (type == ECommandType::ChangeMovingMethod)
 		{
-			auto selectionManager = GetWorld()->GetFirstLocalPlayerFromController()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
+			auto selectionManager = GetWorld()->GetSubsystem<UPlayerSelectionManagingSubsystem>();
 			auto unit = Cast<AUnitBase>(selectionManager->GetRepresentativeActor());
 			Label->SetText(FText::FromString(EnumToString(unit->GetMovementStrategy())));
 		}

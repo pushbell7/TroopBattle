@@ -35,7 +35,7 @@ static const TCHAR* EnumToString(ECommandType type)
  * 
  */
 UCLASS()
-class TROOPBATTLE_API UPlayerSelectionManagingSubsystem : public ULocalPlayerSubsystem
+class TROOPBATTLE_API UPlayerSelectionManagingSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 	
