@@ -54,6 +54,11 @@ void APlayerControllerBase::SpawnTestActor(const FTransform& transform)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	auto actor = GetWorld()->SpawnActor<ACharacter>(TestUnit->GeneratedClass, transform, SpawnParams);
+	if (actor == nullptr)
+	{
+		UE_LOG(LogTemp, Log, TEXT("cant spawn actor"));
+		return;
+	}
 	int index = GetPlayerState<APlayerState>()->GetPlayerId();
 	actor->GetComponentByClass<UUnitPropertiesComponent>()->SetMaster(index);
 }
