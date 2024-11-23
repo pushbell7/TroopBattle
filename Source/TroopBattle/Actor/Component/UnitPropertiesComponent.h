@@ -39,6 +39,10 @@ public:
 	int GetMaster() const { return Master; }
 	void SetMaster(int master) { Master = master; }
 
+	float GetSpeed() const { return Speed; }
+	void SetSpeed(float speed) { Speed = speed; }
+
+
 private:
 	UPROPERTY(replicated)
 	int Master;
@@ -47,7 +51,7 @@ private:
 	int32 Stamina;
 
 	UPROPERTY(replicated)
-	int32 Speed;
+	float Speed;
 
 	UPROPERTY(replicated)
 	int32 Accuracy;

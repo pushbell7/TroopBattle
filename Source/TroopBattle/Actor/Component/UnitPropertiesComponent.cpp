@@ -26,7 +26,8 @@ void UUnitPropertiesComponent::BeginPlay()
 
 	Prototype = EUnitPrototype::Infantry;
 
-
+	// send to DataAsset
+	Speed = 1000.0f;
 }
 
 

@@ -9,6 +9,7 @@
 #include "TroopBattle/Subsystem/PlayerSelectionManagingSubsystem.h"
 #include "TroopBattle/Subsystem/PlayerControllerSubsystem.h"
 
+
 // Sets default values
 AUnitBase::AUnitBase()
 {
@@ -54,7 +55,7 @@ void AUnitBase::Tick(float DeltaTime)
 		auto location = GetActorLocation();
 		AccumulatedTime += DeltaTime * ObservingAngleSpeed / ObservingAngleDegree;
 		auto currentAngle = FMath::Fmod(AccumulatedTime, 2.0f * ObservingAngleDegree) - ObservingAngleDegree;
-		auto rotatedDirection = GetActorForwardVector().RotateAngleAxis(FMathf::Sin(AccumulatedTime) * ObservingAngleDegree, FVector::UpVector);
+		auto rotatedDirection = GetActorForwardVector().RotateAngleAxis(FMath::Sin(AccumulatedTime) * ObservingAngleDegree, FVector::UpVector);
 		auto endOfSight = location + rotatedDirection * ObservingDistance;
 
 		DrawDebugLine(GetWorld(), location, endOfSight, FColor::Green);
@@ -66,6 +67,26 @@ void AUnitBase::Tick(float DeltaTime)
 		if (bHit)
 		{
 			UE_LOG(LogTemp, Log, TEXT("%s"), *hitResult.GetActor()->GetName());
+		}
+	}
+
+	{
+		FCollisionQueryParams collisionParams;
+		collisionParams.AddIgnoredActor(this);
+		collisionParams.bReturnPhysicalMaterial = true;
+		auto position = GetActorLocation();
+		static FHitResult hitResult;
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, position, position + FVector(0, 0, -100), ECollisionChannel::ECC_GameTraceChannel1, collisionParams))
+		{
+			if (hitResult.PhysMaterial.IsValid())
+			{
+				auto physicalMaterialName = hitResult.PhysMaterial->GetName();
+				if (physicalMaterialName != RecentPhysicalMaterialName)
+				{
+					RecentPhysicalMaterialName = hitResult.PhysMaterial->GetName();
+					GetCharacterMovement<UCharacterMovementComponent>()->MaxWalkSpeed = PropertiesComponent->GetSpeed() * (1 - hitResult.PhysMaterial->Friction);
+				}
+			}		
 		}
 	}
 }

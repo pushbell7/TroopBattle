@@ -50,6 +50,8 @@ private:
 	float ObservingAngleDegree;
 	float ObservingAngleSpeed;
 
+	FString RecentPhysicalMaterialName;
+
 public:
 	// Sets default values for this character's properties
 	AUnitBase();
