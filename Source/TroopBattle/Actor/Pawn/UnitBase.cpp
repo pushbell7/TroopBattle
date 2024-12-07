@@ -80,10 +80,20 @@ void AUnitBase::Tick(float DeltaTime)
 		{
 			if (hitResult.PhysMaterial.IsValid())
 			{
-				auto physicalMaterialName = hitResult.PhysMaterial->GetName();
-				if (physicalMaterialName != RecentPhysicalMaterialName)
+				auto terrainName = hitResult.PhysMaterial->GetName();
+				if (terrainName != BeneathTerrainName)
 				{
-					RecentPhysicalMaterialName = hitResult.PhysMaterial->GetName();
+					auto physicalMaterialSettings = GetWorld()->GetSubsystem<UPlayerControllerSubsystem>()->PhysicalMaterialSettingsDataAsset;
+					auto foundItem = physicalMaterialSettings->PhysicalMaterialSettings.FindByPredicate([material = hitResult.PhysMaterial](const FPhysicalMaterialSetting& item)
+						{
+							return item.PhysicalMaterial == material;
+						});
+					if (foundItem)
+					{
+						UE_LOG(LogTemp, Log, TEXT("can attack : %s"), foundItem->bCanAttack ? TEXT("O") : TEXT("X"));
+					}
+
+					BeneathTerrainName = terrainName;
 					GetCharacterMovement<UCharacterMovementComponent>()->MaxWalkSpeed = PropertiesComponent->GetSpeed() * (1 - hitResult.PhysMaterial->Friction);
 				}
 			}		

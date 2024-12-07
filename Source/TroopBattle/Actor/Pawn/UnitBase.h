@@ -50,7 +50,7 @@ private:
 	float ObservingAngleDegree;
 	float ObservingAngleSpeed;
 
-	FString RecentPhysicalMaterialName;
+	FString BeneathTerrainName;
 
 public:
 	// Sets default values for this character's properties

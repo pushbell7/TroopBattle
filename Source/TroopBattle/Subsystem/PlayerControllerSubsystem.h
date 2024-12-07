@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "TroopBattle/Data/PhysicalMaterialSetting.h"
 #include "PlayerControllerSubsystem.generated.h"
 
 /**
@@ -14,8 +15,13 @@ class TROOPBATTLE_API UPlayerControllerSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 	
+public:
+	// temporary setting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPhysicalMaterialSettingsDataAsset* PhysicalMaterialSettingsDataAsset;
 
 public:
+	UPlayerControllerSubsystem();
 
 	int GetMyPlayerId() const;
 	APlayerController* GetMyController() const;
